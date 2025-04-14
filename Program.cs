@@ -8,7 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register services
-builder.Services.AddScoped<IFibonacciService>();
+builder.Services.AddScoped<IFibonacciService, FibonacciService>();
 
 var app = builder.Build();
 
