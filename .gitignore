@@ -1,0 +1,36 @@
+# Build artifacts
+bin/
+obj/
+out/
+
+# Rider project files
+.idea/
+*.suo
+*.user
+
+# VS Code files
+.vscode/
+
+# User-specific files
+*.userprefs
+*.rsuser
+*.sln.docstates
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+
+# Test results
+TestResults/
+*.nunit.xml
+*.trx
+
+# NuGet
+packages/
+*.nupkg
+.nuget/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
