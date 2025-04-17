@@ -24,9 +24,14 @@ namespace FibonacciApi.Controllers
             CancellationToken cancellationToken)
         {
             try
-            {
+            {   
+                // Enforce timeoutMs from request
+                var timeoutCts = new CancellationTokenSource(TimeSpan.FromMilliseconds(request.TimeoutMs));
+                var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(timeoutCts.Token, cancellationToken);
+
                 // Introduction service layer
-                var response = await _fibonacciService.GenerateFibonacciAsync(request, cancellationToken);
+                var response = await _fibonacciService.GenerateFibonacciAsync(request, linkedCts.Token);
+
                 return Ok(response);
             }
             catch (ArgumentException ex)
