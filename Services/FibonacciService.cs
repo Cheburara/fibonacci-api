@@ -53,7 +53,6 @@ namespace FibonacciApi.Services
 
                     await Task.Delay(500, cancellationToken); // Simulate CPU work
 
-
                     // Store computed value in cache
                     if (request.UseCache)
                     {
@@ -65,6 +64,22 @@ namespace FibonacciApi.Services
                     {
                         results.Add((currentIndex, result));
                     }
+                    
+                    // Memory check
+                    if (request.MaxMemoryMb > 0)
+                    {
+                        long usedBytes = GC.GetTotalMemory(false);
+                        long maxBytes = request.MaxMemoryMb * 1024L * 1024L;
+
+                        if (usedBytes > maxBytes)
+                        {
+                            lock (response)
+                            {
+                                response.MemoryLimitReached = true;
+                            }
+                        }
+                    }
+
                 }, cancellationToken);
 
                 tasks.Add(task);
