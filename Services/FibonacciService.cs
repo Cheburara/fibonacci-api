@@ -1,9 +1,17 @@
+using FibonacciApi.Caching;
 using FibonacciApi.Models;
 
 namespace FibonacciApi.Services
 {
     public class FibonacciService : IFibonacciService
     {
+        private readonly IFibonacciCache _cache;
+
+        public FibonacciService(IFibonacciCache cache)
+        {
+            _cache = cache;
+        }
+
         public async Task<FibonacciResponse> GenerateFibonacciAsync(
             FibonacciRequest request,
             CancellationToken cancellationToken)
@@ -28,9 +36,29 @@ namespace FibonacciApi.Services
                     if (cancellationToken.IsCancellationRequested)
                         return;
 
-                    long result = ComputeFibonacci(currentIndex);
+                    long result;
+
+                    // Use cache 
+                    if (request.UseCache && _cache.TryGet(currentIndex, out result))
+                    {
+                        lock (results)
+                        {
+                            results.Add((currentIndex, result));
+                        }
+                        return;
+                    }
+
+                    // Compute Fibonacci if not in cache
+                    result = ComputeFibonacci(currentIndex);
 
                     await Task.Delay(500, cancellationToken); // Simulate CPU work
+
+
+                    // Store computed value in cache
+                    if (request.UseCache)
+                    {
+                        _cache.Set(currentIndex, result);
+                    }
 
                     // Store result with its original index
                     lock (results)
