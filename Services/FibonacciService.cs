@@ -34,8 +34,11 @@ namespace FibonacciApi.Services
                 var task = Task.Run(async () =>
                 {
                     if (cancellationToken.IsCancellationRequested)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested(); 
                         return;
-
+                    }
+                    
                     long result;
 
                     // Use cache 
